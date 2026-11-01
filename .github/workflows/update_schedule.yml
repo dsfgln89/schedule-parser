@@ -3,6 +3,9 @@ name: Update schedule
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -25,3 +28,11 @@ jobs:
 
       - name: Распарсить расписание
         run: python parse_schedule.py
+
+      - name: Сохранить schedule.json
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add schedule.json
+          git commit -m "Update schedule" || echo "Нет изменений"
+          git push
