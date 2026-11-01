@@ -2,6 +2,9 @@ name: Update schedule
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+      timezone: "Europe/Moscow"
 
 permissions:
   contents: write
