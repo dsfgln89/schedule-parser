@@ -1,11 +1,12 @@
 import requests
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 
 GROUP = "26570_1"
 
-
-today = date.today()
+# Получаем текущую дату по московскому времени
+today = datetime.now(ZoneInfo("Europe/Moscow")).date()
 
 # Понедельник текущей недели
 start = today - timedelta(days=today.weekday())
@@ -24,12 +25,18 @@ url = (
 print("Ссылка:")
 print(url)
 
-response = requests.get(url)
+response = requests.get(url, timeout=30)
+response.raise_for_status()
 
-if response.status_code == 200:
-    with open("schedule.pdf", "wb") as file:
-        file.write(response.content)
+# Проверяем, что действительно скачали PDF
+if not response.content.startswith(b"%PDF"):
+    raise Exception("Сервер вернул файл, который не является PDF")
 
-    print("Расписание скачано!")
-else:
-    print("Ошибка:", response.status_code)
+with open("schedule.pdf", "wb") as file:
+    file.write(response.content)
+
+# Сохраняем дату начала расписания для парсера
+with open("schedule_start_date.txt", "w", encoding="utf-8") as file:
+    file.write(start.isoformat())
+
+print("Расписание скачано!")
