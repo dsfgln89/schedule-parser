@@ -1,16 +1,25 @@
 import pdfplumber
 import re
 import json
-from datetime import date, timedelta
-
+from datetime import date, timedelta, datetime
+from zoneinfo import ZoneInfo
 
 PDF_FILE = "schedule.pdf"
 
-# Твоя подгруппа
 SUBGROUP = "01"
 
-# Дата начала расписания
-START_DATE = date(2026, 10, 26)
+# Начало первого известного двухнедельного периода
+BASE_START_DATE = date(2026, 10, 26)
+
+# Текущая дата по московскому времени
+today = datetime.now(ZoneInfo("Europe/Moscow")).date()
+
+# Определяем номер двухнедельного периода
+days_from_base = (today - BASE_START_DATE).days
+period_number = days_from_base // 14
+
+# Начало текущего двухнедельного периода
+START_DATE = BASE_START_DATE + timedelta(days=period_number * 14)
 
 
 def clean_text(text):
