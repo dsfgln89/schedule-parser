@@ -1,12 +1,17 @@
 import requests
 from datetime import date, timedelta
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 GROUP = "26570_1"
 
 # Начало первого известного двухнедельного периода
 BASE_START_DATE = date(2026, 10, 26)
 
-today = date.today()
+
+today = datetime.now(
+    ZoneInfo("Europe/Moscow")
+).date()
 
 # Определяем номер двухнедельного периода
 days_from_base = (today - BASE_START_DATE).days
